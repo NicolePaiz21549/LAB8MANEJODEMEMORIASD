@@ -1,0 +1,53 @@
+//***********************************************************************************
+//Universidad del Valle de Guatemala
+//BE3029 - Electrónica Digital 2
+//Dulce Nicole Monney Paiz, 21549
+//Laboratorio 8 - Manejo de memoria SD
+//Pre-lab 
+//***********************************************************************************
+
+//Librerías
+//***********************************************************************************
+
+//Definición de pines
+//***********************************************************************************
+
+//Variables globales 
+bool invalidChoiceDisplayed = false; // Bandera para rastrear si se ha mostrado una elección no válida
+//***********************************************************************************
+
+//Prototipos de funciones
+//***********************************************************************************
+
+//Configuración
+void setup() {
+  Serial.begin(115200); //Inicialización de la comunicación serial con el monitor serial
+  Serial.println("Menu:");
+  Serial.println("1. Opción 1");
+  Serial.println("2. Opción 2");
+  Serial.println("3. Opción 3");
+  delay(2000);
+  Serial.println("Ingresa tu opción (1-3): ");
+}
+//***********************************************************************************
+
+//Loop principal
+void loop() {
+  if (Serial.available()) {
+    int choice = Serial.parseInt(); // Lectura de la elección del usuario
+    
+    if (choice >= 1 && choice <= 3) {
+      Serial.print("Se ha seleccionado la opción ");
+      Serial.println(choice);
+      //Restablecer el indicador invalidChoiceDisplayed cuando se recibe una elección válida
+      invalidChoiceDisplayed = false;
+    } else {
+      //Muestra el mensaje "Elección inválida" solo una vez
+      if(!invalidChoiceDisplayed){
+        Serial.println("Elección inválida. Por favor ingresa 1, 2, o 3.");
+        invalidChoiceDisplayed=true;
+        }
+    }
+  }
+}
+//***********************************************************************************
