@@ -13,7 +13,6 @@
 //***********************************************************************************
 
 //Variables globales 
-bool invalidChoiceDisplayed = false; // Bandera para rastrear si se ha mostrado una elección no válida
 //***********************************************************************************
 
 //Prototipos de funciones
@@ -39,15 +38,9 @@ void loop() {
     if (choice >= 1 && choice <= 3) {
       Serial.print("Se ha seleccionado la opción ");
       Serial.println(choice);
-      //Restablecer el indicador invalidChoiceDisplayed cuando se recibe una elección válida
-      invalidChoiceDisplayed = false;
-    } else {
-      //Muestra el mensaje "Elección inválida" solo una vez
-      if(!invalidChoiceDisplayed){
-        Serial.println("Elección inválida. Por favor ingresa 1, 2, o 3.");
-        invalidChoiceDisplayed=true;
-        }
+    } //else {
+      //Serial.println("Elección inválida. Por favor ingresa 1, 2 o 3");
+      //}
     }
   }
-}
 //***********************************************************************************
