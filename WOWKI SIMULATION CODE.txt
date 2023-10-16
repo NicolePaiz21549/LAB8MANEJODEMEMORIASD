@@ -10,7 +10,7 @@
 //***********************************************************************************
 
 //Definición de pines
-#define CS_PIN 5 // CS_PIN 5
+#define CS_PIN 5 
 //***********************************************************************************
 
 //Variables globales 
@@ -42,7 +42,7 @@ void printDirectory(File dir, int numTabs) {
 }
 
 void showMenu() {
-  Serial.println("Elige una opción:");
+  Serial.println("Ingresa tu opción (1-5):");
   Serial.println("1. Mostrar imagen 1");
   Serial.println("2. Mostrar imagen 2");
   Serial.println("3. Mostrar imagen 3");
@@ -65,7 +65,7 @@ void displayImage(const char* imagePath) {
   }
 }
 
-String readLine() { //Lectura que se ingresan al monitor serial
+String readLine() { //Lectura que lo ingresado al monitor serial 
   String received = "";
   char x;
   while (true) {
@@ -85,16 +85,8 @@ void createImage() {
   String imageData;
   String imageName;
   imageName = "holasoynuevo";
-/*
-  Serial.println("Por favor, proporciona un nombre para la imagen (sin extensión):");
-   while (true) {
-    imageName = readLine();
-    if (imageName != "") {
-      break;
-    }
-  } 
-*/
-  Serial.println("Ahora, ingresa el contenido de la imagen. Cuando hayas terminado, escribe 'FIN' en una nueva línea:");
+
+  Serial.println("Ingresa el contenido de la nueva imagen. Cuando hayas terminado, escribe el comando 'FIN' en una nueva línea:");
   while (true) {
     String line = readLine();
     if (line == "FIN") {
@@ -120,16 +112,16 @@ void createImage() {
 void setup() {
   Serial.begin(115200);
 
-  Serial.print("Initializing SD card... ");
+  Serial.print("Inicializando la tarjeta SD...");
 
   if (!SD.begin(CS_PIN)) {
-    Serial.println("Card initialization failed!");
+    Serial.println("¡Falló la inicialización de la tarjeta!D:");
     while (true);
   }
 
-  Serial.println("initialization done.");
+  Serial.println("Inicialización realizada:D");
 
-  Serial.println("Files in the card:");
+  Serial.println("Archivos en la tarjeta SD:");
   root = SD.open("/");
   printDirectory(root, 0);
   Serial.println("");
