@@ -3,44 +3,201 @@
 //BE3029 - Electrónica Digital 2
 //Dulce Nicole Monney Paiz, 21549
 //Laboratorio 8 - Manejo de memoria SD
-//Pre-lab 
 //***********************************************************************************
 
 //Librerías
+#include <SD.h>
 //***********************************************************************************
 
 //Definición de pines
+#define CS_PIN 5 // CS_PIN 5
 //***********************************************************************************
 
 //Variables globales 
+File root;
 //***********************************************************************************
 
 //Prototipos de funciones
+void printDirectory(File dir, int numTabs) {
+  while (true) {
+    File entry = dir.openNextFile();
+    if (!entry) {
+      // no more files
+      break;
+    }
+    for (uint8_t i = 0; i < numTabs; i++) {
+      Serial.print('\t');
+    }
+    Serial.print(entry.name());
+    if (entry.isDirectory()) {
+      Serial.println("/");
+      printDirectory(entry, numTabs + 1);
+    } else {
+      // files have sizes, directories do not
+      Serial.print("\t\t");
+      Serial.println(entry.size(), DEC);
+    }
+    entry.close();
+  }
+}
+
+void showMenu() {
+  Serial.println("Elige una opción:");
+  Serial.println("1. Mostrar imagen 1");
+  Serial.println("2. Mostrar imagen 2");
+  Serial.println("3. Mostrar imagen 3");
+  Serial.println("c. Crear una nueva imagen");
+  Serial.println("v. Ver imagen creada");
+}
+
+void displayImage(const char* imagePath) {
+  File imageFile = SD.open(imagePath);
+  if (imageFile) {
+    Serial.print(imagePath);
+    Serial.println(": ");
+    while (imageFile.available()) {
+      Serial.write(imageFile.read());
+    }
+    imageFile.close();
+  } else {
+    Serial.print("Error al abrir ");
+    Serial.println(imagePath);
+  }
+}
+
+String readLine() {
+  String received = "";
+  char c;
+  while (true) {
+    if (Serial.available()) {
+      c = Serial.read();
+      if (c == '\n') {
+        break;
+      } else {
+        received += c;
+      }
+    }
+  }
+  return received;
+}
+
+void createImage() {
+  String imageName;
+  String imageData;
+
+  //Serial.println("Por favor, proporciona un nombre para la imagen (sin extensión):");
+  imageName = "holasoynuevo";
+
+  Serial.println("Hola, ingresa el contenido de la imagen. Cuando hayas terminado, escribe el comando 'FIN' en una nueva línea:");
+  while (true) {
+    String line = readLine();
+    if (line == "FIN") {
+      break;
+    }
+    imageData += line + "\n"; // Añade un salto de línea después de cada línea ingresada.
+  }
+
+  // Guardar los datos en la tarjeta SD
+  File newImage = SD.open("/" + imageName + ".txt", FILE_WRITE);
+  if (newImage) {
+    newImage.print(imageData);
+    newImage.close();
+    Serial.println("Imagen creada y guardada con éxito!");
+  } else {
+    Serial.println("Error al guardar la imagen.");
+  }
+}
+
+void viewCustomImages() {
+  Serial.println("Imágenes personalizadas en la tarjeta SD:");
+  
+  // Listar imágenes en el directorio raíz
+  File dir = SD.open("/");
+  int imageIndex = 0;
+  String imageNames[50]; // Suponiendo un máximo de 50 imágenes personalizadas
+
+  while (true) {
+    File entry = dir.openNextFile();
+    if (!entry) {
+      break;
+    }
+    if (!entry.isDirectory() && String(entry.name()).endsWith(".txt")) {
+      imageIndex++;
+      imageNames[imageIndex] = entry.name();
+      Serial.print(imageIndex);
+      Serial.print(". ");
+      Serial.println(entry.name());
+    }
+    entry.close();
+  }
+  dir.close();
+
+  if (imageIndex == 0) {
+    Serial.println("No hay imágenes personalizadas para mostrar.");
+    return;
+  }
+
+  Serial.println("Introduce el número de la imagen que quieres ver:");
+  while (!Serial.available());
+  int chosenImage = Serial.parseInt();
+
+  if (chosenImage > 0 && chosenImage <= imageIndex) {
+    displayImage(imageNames[chosenImage].c_str());
+  } else {
+    Serial.println("Selección no válida.");
+  }
+}
 //***********************************************************************************
 
 //Configuración
 void setup() {
-  Serial.begin(115200); //Inicialización de la comunicación serial con el monitor serial
-  Serial.println("Menu:");
-  Serial.println("1. Opción 1");
-  Serial.println("2. Opción 2");
-  Serial.println("3. Opción 3");
-  delay(2000);
-  Serial.println("Ingresa tu opción (1-3): ");
+  Serial.begin(115200);
+
+  Serial.print("Initializing SD card... ");
+
+  if (!SD.begin(CS_PIN)) {
+    Serial.println("Card initialization failed!");
+    while (true);
+  }
+
+  Serial.println("initialization done.");
+
+  Serial.println("Files in the card:");
+  root = SD.open("/");
+  printDirectory(root, 0);
+  Serial.println("");
+
+  showMenu();
 }
 //***********************************************************************************
 
 //Loop principal
 void loop() {
   if (Serial.available()) {
-    int choice = Serial.parseInt(); // Lectura de la elección del usuario
-    
-    if (choice >= 1 && choice <= 3) {
-      Serial.print("Se ha seleccionado la opción ");
-      Serial.println(choice);
-    } //else {
-      //Serial.println("Elección inválida. Por favor ingresa 1, 2 o 3");
-      //}
+    char option = Serial.read();
+    showMenu();
+    switch (option) {
+      case '1':
+        displayImage("/DINO.txt");
+        showMenu();
+        break;
+      case '2':
+        displayImage("/ScottPilgrim.txt");
+        showMenu();
+        break;
+      case '3':
+        displayImage("/sleepykirby.txt");
+        showMenu();
+        break;
+      case 'c':
+        createImage();
+        showMenu();
+        break;
+      case 'v':
+        displayImage("/holasoynuevo.txt");
+        showMenu();
+        break;
     }
   }
+}
 //***********************************************************************************
