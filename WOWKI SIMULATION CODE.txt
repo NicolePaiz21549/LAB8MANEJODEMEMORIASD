@@ -14,15 +14,15 @@
 //***********************************************************************************
 
 //Variables globales 
-File root;
+File root; //indicador del directorio raíz de la SD
 //***********************************************************************************
 
 //Prototipos de funciones
-void printDirectory(File dir, int numTabs) {
+void printDirectory(File dir, int numTabs) { //enumeración del contenido del directorio del SD
   while (true) {
     File entry = dir.openNextFile();
     if (!entry) {
-      // no more files
+      //no más archivos
       break;
     }
     for (uint8_t i = 0; i < numTabs; i++) {
@@ -33,7 +33,7 @@ void printDirectory(File dir, int numTabs) {
       Serial.println("/");
       printDirectory(entry, numTabs + 1);
     } else {
-      // files have sizes, directories do not
+      //Los archivos tienen tamaños, los directorios no.
       Serial.print("\t\t");
       Serial.println(entry.size(), DEC);
     }
@@ -50,8 +50,9 @@ void showMenu() {
   Serial.println("5. Ver imagen creada");
 }
 
-void displayImage(const char* imagePath) {
-  File imageFile = SD.open(imagePath);
+//Se encarga de mostrar el contenido de un archivo de imagen ubicado en una tarjeta SD.
+void displayImage(const char* imagePath) { //Este parámetro es una cadena que representa la ruta al archivo de imagen en la tarjeta SD.
+  File imageFile = SD.open(imagePath); 
   if (imageFile) {
     Serial.print(imagePath);
     Serial.println(": ");
@@ -67,7 +68,7 @@ void displayImage(const char* imagePath) {
 
 String readLine() { //Lectura que lo ingresado al monitor serial 
   String received = "";
-  char x;
+  char x; //Variable almacenadora de lectura
   while (true) {
     if (Serial.available()) {
       x = Serial.read();
@@ -82,8 +83,8 @@ String readLine() { //Lectura que lo ingresado al monitor serial
 }
 
 void createImage() {
-  String imageData;
-  String imageName;
+  String imageData; //Acumula los datos que se escriben para dibujar la imagen
+  String imageName; 
   imageName = "holasoynuevo";
 
   Serial.println("Ingresa el contenido de la nueva imagen. Cuando hayas terminado, escribe el comando 'FIN' en una nueva línea:");
@@ -96,10 +97,10 @@ void createImage() {
   }
 
   // Guardar los datos en la tarjeta SD
-  File newImage = SD.open("/" + imageName + ".txt", FILE_WRITE);
-  if (newImage) {
+  File newImage = SD.open("/" + imageName + ".txt", FILE_WRITE); //Ruta del archivo concatenada con el nombre de la imagen y especificación de que el archivo debe abrirse para escribir
+  if (newImage) { 
     newImage.print(imageData);
-    newImage.close();
+    newImage.close(); //Este paso es importante para guardar los cambios y liberar los recursos asociados con el archivo.
     Serial.println("Imagen creada y guardada con éxito!");
     displayImage("/holasoynuevo.txt");
   } else {
