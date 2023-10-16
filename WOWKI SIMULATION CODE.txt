@@ -46,8 +46,8 @@ void showMenu() {
   Serial.println("1. Mostrar imagen 1");
   Serial.println("2. Mostrar imagen 2");
   Serial.println("3. Mostrar imagen 3");
-  Serial.println("c. Crear una nueva imagen");
-  Serial.println("v. Ver imagen creada");
+  Serial.println("4. Crear una nueva imagen");
+  Serial.println("5. Ver imagen creada");
 }
 
 void displayImage(const char* imagePath) {
@@ -65,16 +65,16 @@ void displayImage(const char* imagePath) {
   }
 }
 
-String readLine() {
+String readLine() { //Lectura que se ingresan al monitor serial
   String received = "";
-  char c;
+  char x;
   while (true) {
     if (Serial.available()) {
-      c = Serial.read();
-      if (c == '\n') {
+      x = Serial.read();
+      if (x == '\n') {
         break;
       } else {
-        received += c;
+        received += x;
       }
     }
   }
@@ -82,13 +82,19 @@ String readLine() {
 }
 
 void createImage() {
-  String imageName;
   String imageData;
-
-  //Serial.println("Por favor, proporciona un nombre para la imagen (sin extensión):");
+  String imageName;
   imageName = "holasoynuevo";
-
-  Serial.println("Hola, ingresa el contenido de la imagen. Cuando hayas terminado, escribe el comando 'FIN' en una nueva línea:");
+/*
+  Serial.println("Por favor, proporciona un nombre para la imagen (sin extensión):");
+   while (true) {
+    imageName = readLine();
+    if (imageName != "") {
+      break;
+    }
+  } 
+*/
+  Serial.println("Ahora, ingresa el contenido de la imagen. Cuando hayas terminado, escribe 'FIN' en una nueva línea:");
   while (true) {
     String line = readLine();
     if (line == "FIN") {
@@ -103,48 +109,9 @@ void createImage() {
     newImage.print(imageData);
     newImage.close();
     Serial.println("Imagen creada y guardada con éxito!");
+    displayImage("/holasoynuevo.txt");
   } else {
     Serial.println("Error al guardar la imagen.");
-  }
-}
-
-void viewCustomImages() {
-  Serial.println("Imágenes personalizadas en la tarjeta SD:");
-  
-  // Listar imágenes en el directorio raíz
-  File dir = SD.open("/");
-  int imageIndex = 0;
-  String imageNames[50]; // Suponiendo un máximo de 50 imágenes personalizadas
-
-  while (true) {
-    File entry = dir.openNextFile();
-    if (!entry) {
-      break;
-    }
-    if (!entry.isDirectory() && String(entry.name()).endsWith(".txt")) {
-      imageIndex++;
-      imageNames[imageIndex] = entry.name();
-      Serial.print(imageIndex);
-      Serial.print(". ");
-      Serial.println(entry.name());
-    }
-    entry.close();
-  }
-  dir.close();
-
-  if (imageIndex == 0) {
-    Serial.println("No hay imágenes personalizadas para mostrar.");
-    return;
-  }
-
-  Serial.println("Introduce el número de la imagen que quieres ver:");
-  while (!Serial.available());
-  int chosenImage = Serial.parseInt();
-
-  if (chosenImage > 0 && chosenImage <= imageIndex) {
-    displayImage(imageNames[chosenImage].c_str());
-  } else {
-    Serial.println("Selección no válida.");
   }
 }
 //***********************************************************************************
@@ -175,26 +142,38 @@ void setup() {
 void loop() {
   if (Serial.available()) {
     char option = Serial.read();
-    showMenu();
     switch (option) {
       case '1':
         displayImage("/DINO.txt");
+        Serial.println("");
+        Serial.println("");
         showMenu();
         break;
       case '2':
         displayImage("/ScottPilgrim.txt");
+        Serial.println("");
+        Serial.println("");
         showMenu();
         break;
       case '3':
         displayImage("/sleepykirby.txt");
+        Serial.println("");
+        Serial.println("");
         showMenu();
         break;
-      case 'c':
+      case '4':
+        Serial.println("");
+        Serial.println("");
         createImage();
         showMenu();
         break;
-      case 'v':
+      case '5':
         displayImage("/holasoynuevo.txt");
+        Serial.println("");
+        Serial.println("");
+        showMenu();
+        break;
+      default:
         showMenu();
         break;
     }
