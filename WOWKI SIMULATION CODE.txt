@@ -139,31 +139,31 @@ void loop() {
         displayImage("/DINO.txt");
         Serial.println("");
         Serial.println("");
-        showMenu();
+        //showMenu();
         break;
       case '2':
         displayImage("/ScottPilgrim.txt");
         Serial.println("");
         Serial.println("");
-        showMenu();
+        //showMenu();
         break;
       case '3':
         displayImage("/sleepykirby.txt");
         Serial.println("");
         Serial.println("");
-        showMenu();
+        //showMenu();
         break;
       case '4':
         Serial.println("");
         Serial.println("");
         createImage();
-        showMenu();
+        //showMenu();
         break;
       case '5':
         displayImage("/holasoynuevo.txt");
         Serial.println("");
         Serial.println("");
-        showMenu();
+        //showMenu();
         break;
       default:
         showMenu();
