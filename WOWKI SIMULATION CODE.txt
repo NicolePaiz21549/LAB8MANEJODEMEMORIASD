@@ -18,7 +18,7 @@ File root; //indicador del directorio raíz de la SD
 //***********************************************************************************
 
 //Prototipos de funciones
-void printDirectory(File dir, int numTabs) { //enumeración del contenido del directorio del SD
+void printDirectory(File dir, int numTabs) { //Función encargada de la enumeración del contenido del directorio del SD
   while (true) {
     File entry = dir.openNextFile();
     if (!entry) {
@@ -41,7 +41,7 @@ void printDirectory(File dir, int numTabs) { //enumeración del contenido del di
   }
 }
 
-void showMenu() {
+void showMenu() { //Función para mostrar el menú
   Serial.println("Ingresa tu opción (1-5):");
   Serial.println("1. Mostrar imagen 1");
   Serial.println("2. Mostrar imagen 2");
@@ -50,7 +50,7 @@ void showMenu() {
   Serial.println("5. Ver imagen creada");
 }
 
-//Se encarga de mostrar el contenido de un archivo de imagen ubicado en una tarjeta SD.
+//Función que se encarga de mostrar el contenido de un archivo de imagen ubicado en una tarjeta SD.
 void displayImage(const char* imagePath) { //Este parámetro es una cadena que representa la ruta al archivo de imagen en la tarjeta SD.
   File imageFile = SD.open(imagePath); 
   if (imageFile) {
@@ -66,7 +66,7 @@ void displayImage(const char* imagePath) { //Este parámetro es una cadena que r
   }
 }
 
-String readLine() { //Lectura que lo ingresado al monitor serial 
+String readLine() { //Lectura de lo ingresado al monitor serial 
   String received = "";
   char x; //Variable almacenadora de lectura
   while (true) {
@@ -82,12 +82,12 @@ String readLine() { //Lectura que lo ingresado al monitor serial
   return received;
 }
 
-void createImage() {
+void createImage() { //Función para crear nueva imagen
   String imageData; //Acumula los datos que se escriben para dibujar la imagen
   String imageName; 
   imageName = "holasoynuevo";
 
-  Serial.println("Ingresa el contenido de la nueva imagen. Cuando hayas terminado, escribe el comando 'FIN' en una nueva línea:");
+  Serial.println("Ingresa el contenido de la nueva imagen línea por línea. Cuando hayas terminado, escribe el comando 'FIN' en una nueva línea:");
   while (true) {
     String line = readLine();
     if (line == "FIN") {
@@ -172,3 +172,5 @@ void loop() {
   }
 }
 //***********************************************************************************
+
+
